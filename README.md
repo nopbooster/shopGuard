@@ -35,7 +35,13 @@ What this says:
 2. **Claude models and gpt-5.5 did not follow any of the injections tested.** Sonnet and Haiku usually told the shopper about the hidden text (Sonnet every time); gpt-5.5 ignored it silently.
 3. **The small OpenAI model is hijackable.** `gpt-5.4-mini` followed 6.7% of attacks once exposed, mostly the false "other brands have safety recalls" claim, using a spoofed tool-result block or legal-urgency framing.
 4. **Cheap defences fixed it.** One rule in the system prompt, or wrapping tool output in an untrusted-data block, took the mini from 22 hijacks to 0 or 1 with no visible change to replies.
-5. **The judge is trustworthy for this task.** 97% agreement with hand labels (optimistic: see limits) and 12/12 on written positive controls.
+
+![gpt-5.4-mini hijacks by framing, with and without a defence](docs/img/defences.png)
+5. **Failed attacks still cost something.** When Sonnet read an injection it told the shopper about it every time, and its replies grew from 28 to 53 words, well past the shop's own 30-word rule.
+
+![Mean reply length with and without an attack](docs/img/reply_length.png)
+
+6. **The judge is trustworthy for this task.** 97% agreement with hand labels (optimistic: see limits) and 12/12 on written positive controls.
 
 **Limits that matter:** attacks are fixed, not adaptive (the LLM attacker I tried returned nothing usable, and I did not work around that); one catalog, one poisoned listing, single-turn chats; one run per condition; the judge is a Claude model; the mini's defence runs stopped at 326 of 330 when OpenAI credit ran out; and the helpfulness cost of the defences could not be measured on clean queries because the mini retrieved a product for only 2 of 40 of them. Zero hijacks shows these payloads failed, not that a determined attacker would.
 
