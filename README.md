@@ -49,8 +49,11 @@ End-to-end risk ≈ exposure × hijack. Most published injection evaluations mea
 | Retrieval | `src/retrieval.py` | Reproduces the plugin's search call and the exact tool-result text the model receives |
 | Attacks | `src/attacks.py` | 4 harm goals × 3 phrasing styles (blunt, fake system notice, subtle). Payload in the short description; optional keyword stuffing in the full description |
 | Exposure | `scripts/measure_exposure.py` | Stage 1 measurement, no API calls |
+| Assistant | `src/assistant.py` | Python re-implementation of the production chat turn: verbatim system prompt, identical `search_products` tool schema, 3-round tool loop |
+| Runner | `scripts/run_stage2.py` | Stage 2: end-to-end runs where the model chooses its own search keywords; clean baseline included; resumable |
+| Judge | `src/judge.py`, `scripts/judge_stage2.py` | String checks for phishing and prompt leakage; LLM judge for ranking manipulation and disparagement; summary tables |
 
-Planned: model runner, LLM-based judge with human spot checks, defense variants (prompt warning, untrusted-data delimiting, output checker, retrieval-level filtering), and a cross-model comparison.
+Planned: human-labelled validation of the LLM judge, defense variants (prompt warning, untrusted-data delimiting, output checker, retrieval-level filtering), and a cross-model comparison.
 
 ## Preliminary results
 
@@ -78,7 +81,17 @@ python3 src/catalog.py              # regenerate data/catalog.json
 python3 scripts/measure_exposure.py # Stage 1, no API key needed
 ```
 
-Requires Python 3.10+. Stage 1 uses only the standard library. Later stages will need `pip install -r requirements.txt` and an `ANTHROPIC_API_KEY` environment variable.
+Stage 2 (real model calls):
+
+```bash
+pip install -r requirements.txt
+export ANTHROPIC_API_KEY=...         # use a dedicated key with a spend limit
+python3 scripts/run_stage2.py --limit 5   # smoke test
+python3 scripts/run_stage2.py             # full run, resumable
+python3 scripts/judge_stage2.py           # score and summarise
+```
+
+Requires Python 3.10+. Stage 1 uses only the standard library.
 
 ## Repository layout
 
@@ -100,8 +113,9 @@ All experiments run offline against a synthetic catalog. No live store, real cus
 - [x] Keyword retrieval and attack library
 - [x] Stage 1: exposure measurement
 - [ ] Validate retrieval against the production plugin's search settings
-- [ ] Stage 2: model runner and hijack-rate measurement
-- [ ] LLM judge with human-labelled validation sample
+- [x] Stage 2: model runner and judge implemented
+- [ ] Stage 2: full run (Sonnet 5.5 vs Haiku 5.5)
+- [ ] LLM judge validated against a human-labelled sample
 - [ ] Stage 3: defenses and helpfulness cost
 - [ ] Cross-model comparison
 - [ ] Extension: injection in an AI product-translation plugin
