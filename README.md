@@ -8,7 +8,19 @@
 
 AI shopping assistants read product data and recommend items to customers. In many stores, that product data is written by someone other than the store owner: marketplace vendors, supplier feeds, bulk imports. Anyone who can edit a product description can try to place instructions in it that the AI then follows. This is **indirect prompt injection**.
 
-ShopGuard is an offline, reproducible study of this risk, built around the architecture of a real, deployed product: an AI shop assistant plugin for [nopCommerce](https://www.nopcommerce.com/) that uses keyword search to retrieve products and sends them to a language model (Claude by default; the plugin is model-agnostic).
+ShopGuard is an offline, reproducible study of this risk, built around the architecture of a real, deployed product: an AI shop assistant plugin for [nopCommerce](https://www.nopcommerce.com/) (Claude by default; the plugin is model-agnostic).
+
+### The system under study
+
+The assistant is a small tool-using agent:
+
+1. The shopper writes a message in plain language.
+2. The model calls a `search_products` tool with keywords it chooses.
+3. nopCommerce runs a keyword search (whole-string substring match over name, short and full description, category, manufacturer and tags), ordered by display position, capped at 6 results.
+4. The model receives one line per product: name, price, SKU, and the short description (HTML stripped, first 300 characters).
+5. The model replies; the storefront renders product cards from the search results.
+
+Untrusted catalog text therefore reaches the model as **tool output**, the same pattern found in browsing and email agents. One detail matters a great deal: the full description is searched but never shown to the model, so an attacker can use it to get retrieved while placing the instruction in the short description.
 
 ### Research questions
 
@@ -24,7 +36,7 @@ End-to-end risk ≈ exposure × hijack. Most published injection evaluations mea
 | | |
 |---|---|
 | **Attacker** | Anyone who can edit product text: a marketplace vendor, a compromised supplier feed, an insider |
-| **Attacker controls** | Product name, descriptions, specs |
+| **Attacker controls** | Product name, SKU, short and full description, tags |
 | **Attacker cannot touch** | System prompt, plugin code, the model |
 | **Harms measured** | Ranking manipulation, competitor disparagement, phishing / off-site redirection, system-prompt leakage |
 
@@ -34,8 +46,8 @@ End-to-end risk ≈ exposure × hijack. Most published injection evaluations mea
 |---|---|---|
 | Catalog | `data/catalog.json`, `src/catalog.py` | 50 fictional products across 8 categories |
 | Queries | `data/queries.json` | 40 realistic shopper questions, including one with no match |
-| Retrieval | `src/retrieval.py` | Keyword search approximating the plugin's search step |
-| Attacks | `src/attacks.py` | 4 harm goals × 3 phrasing styles (blunt, fake system notice, subtle), with optional keyword stuffing |
+| Retrieval | `src/retrieval.py` | Reproduces the plugin's search call and the exact tool-result text the model receives |
+| Attacks | `src/attacks.py` | 4 harm goals × 3 phrasing styles (blunt, fake system notice, subtle). Payload in the short description; optional keyword stuffing in the full description |
 | Exposure | `scripts/measure_exposure.py` | Stage 1 measurement, no API calls |
 
 Planned: model runner, LLM-based judge with human spot checks, defense variants (prompt warning, untrusted-data delimiting, output checker, retrieval-level filtering), and a cross-model comparison.
@@ -44,16 +56,18 @@ Planned: model runner, LLM-based judge with human spot checks, defense variants 
 
 ### Stage 1: Retrieval exposure
 
-Five low-traffic products (a kettle, a wallet, a water bottle, a speaker, a keyboard combo) were poisoned, and all 40 queries were run through keyword retrieval (top 5 results).
+Five low-traffic products (a kettle, a wallet, a water bottle, a speaker, a keyboard combo) were poisoned. Each of the 40 queries was paired with a representative search keyword (`keywords` in `data/queries.json`) and run through the reproduced search (top 6 results).
 
 | Condition | Mean share of queries that retrieve the poisoned product |
 |---|---|
-| Injection only | 4% |
-| Injection + keyword stuffing | 72% |
+| Injection only | 2% |
+| Injection + keyword stuffing in the full description | 49% |
 
-**Interpretation:** for keyword-search assistants, retrieval acts as a gatekeeper. A hidden instruction in an obscure product rarely reaches the model, but one line of stuffed keywords puts it in front of the model for most conversations. Catalog spam filtering is therefore a security control, not only an SEO concern.
+All 12 payloads fit inside the 300-character short-description window, so none is cut off before reaching the model.
 
-**Limitations:** the retrieval module approximates the production plugin and has not yet been validated against it. Exposure depends heavily on which fields are searched; if only product names are searched, description stuffing has no effect and an attacker would target names or tags instead. The catalog and query set are small and synthetic.
+**Interpretation:** retrieval acts as a gatekeeper. A hidden instruction in an obscure product almost never reaches the model, but one line of stuffed keywords in a field the model never reads puts the poisoned product in front of it for about half of all conversations. Catalog spam filtering is therefore a security control, not only an SEO concern.
+
+**Limitations:** the search keywords here are chosen by hand; in production the model chooses them, and Stage 2 will measure exposure with the model's own keyword choices. Because nopCommerce matches the whole keyword string, multi-word searches ("running shoes") are not matched by single-word stuffing, so exposure depends on how the model phrases its searches. Display position is approximated by catalog order. The catalog and query set are small and synthetic.
 
 ## Quick start
 

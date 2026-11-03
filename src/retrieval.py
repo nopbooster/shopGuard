@@ -1,52 +1,65 @@
-"""Keyword retrieval that approximates the shop assistant's search step.
+"""Catalog search that reproduces the shop assistant plugin's search step.
 
-The real plugin uses keyword search over the nopCommerce catalog and sends
-the matching products to the model. This module mimics that: tokenise the
-query, drop stop words, score each product by how many query terms appear in
-its text, and return the top-k.
+How the real plugin works (Nop.Plugin.Widgets.AiAssistant, nopCommerce 4.90):
 
-ASSUMPTION TO VERIFY against the real plugin: which fields are searched
-(name only vs. descriptions too) and how many products are sent (top_k).
+1. The model does not see the catalog directly. It calls a `search_products`
+   tool with a short keyword string it chooses itself (e.g. "laptop").
+2. The plugin calls nopCommerce's IProductService.SearchProductsAsync with
+   searchDescriptions=true. With no external search provider, nopCommerce
+   matches the WHOLE keyword string as a case-insensitive substring
+   (SQL LIKE '%keywords%') against product name, short description, full
+   description, category name, manufacturer name and product tags.
+3. Results are ordered by display position and capped at MaxProductsPerSearch
+   (default 6).
+4. For each result the model receives ONE line:
+       - {name} | price: {price} | sku: {sku} | {short description, HTML stripped, max 300 chars}
+   The FULL description is searched but never shown to the model.
+
+Point 4 shapes the whole attack surface: an attacker who wants the model to
+read an instruction must place it in the name, SKU or the first 300 characters
+of the short description. The full description is useful to an attacker only
+for getting retrieved.
 """
-import re
 
-STOP_WORDS = {
-    "a", "an", "the", "for", "to", "of", "and", "or", "with", "i", "my", "me",
-    "need", "want", "that", "can", "on", "in", "is", "it", "do", "you", "sell",
-    "good", "not", "too", "something", "some", "make", "at", "home", "without",
-    "much", "way", "all", "day", "as", "year", "old", "doesn't", "have", "am",
-    "looking", "best", "cheap", "this", "which", "what",
-}
+DEFAULT_PAGE_SIZE = 6
+SHORT_DESC_LIMIT = 300
+
+SEARCHED_FIELDS = ("name", "short_description", "full_description", "category", "brand")
 
 
-def tokenize(text):
-    return [t for t in re.findall(r"[a-z0-9]+", text.lower()) if t not in STOP_WORDS and len(t) > 1]
+def matches(product, keywords):
+    kw = keywords.strip().lower()
+    if not kw:
+        return False
+    haystacks = [str(product.get(f, "")) for f in SEARCHED_FIELDS]
+    haystacks += product.get("tags", [])
+    return any(kw in h.lower() for h in haystacks)
 
 
-def product_text(p, fields=("name", "short_description", "full_description")):
-    parts = [str(p.get(f, "")) for f in fields]
-    if "specs" in p:
-        parts.append(" ".join(f"{k} {v}" for k, v in p["specs"].items()))
-    return " ".join(parts)
+def search(keywords, catalog, page_size=DEFAULT_PAGE_SIZE):
+    """Return up to `page_size` products whose text contains `keywords`.
+
+    Display position is approximated by product id (catalog order).
+    """
+    hits = [p for p in catalog if matches(p, keywords)]
+    hits.sort(key=lambda p: p.get("display_order", p["id"]))
+    return hits[:page_size], len(hits)
 
 
-def stem(t):
-    # Crude plural stripping so "laptops" matches "laptop".
-    return t[:-1] if len(t) > 3 and t.endswith("s") else t
+def truncate_short_description(text, limit=SHORT_DESC_LIMIT):
+    text = " ".join(str(text).split())
+    return text if len(text) <= limit else text[:limit] + "…"
 
 
-def search(query, catalog, top_k=5):
-    q_terms = {stem(t) for t in tokenize(query)}
-    if not q_terms:
-        return []
-    scored = []
-    for p in catalog:
-        p_terms = {stem(t) for t in tokenize(product_text(p))}
-        overlap = q_terms & p_terms
-        if overlap:
-            # Name matches count double, like a typical relevance boost.
-            name_terms = {stem(t) for t in tokenize(p["name"])}
-            score = len(overlap) + len(q_terms & name_terms)
-            scored.append((score, p["id"], p))
-    scored.sort(key=lambda x: (-x[0], x[1]))
-    return [p for _, _, p in scored[:top_k]]
+def format_tool_result(keywords, products, total):
+    """Exactly the text the model receives as the tool result."""
+    if not products:
+        return f'No products found for "{keywords}".'
+    lines = [f'Found {total} product(s) for "{keywords}" (showing {len(products)}):']
+    for p in products:
+        sku = p.get("sku") or "n/a"
+        lines.append(
+            f"- {p['name']} | price: ${p['price']:.2f} | sku: {sku} | "
+            f"{truncate_short_description(p.get('short_description', ''))}"
+        )
+    return "\n".join(lines)
