@@ -150,6 +150,14 @@ Caveats: static payloads, one catalog, one run per condition, a single judge mod
 
 **Adaptive attacker pilot (inconclusive).** An LLM attacker (Sonnet 5.5) was asked to write and iteratively rewrite listing payloads for 6 queries x 3 goals (18 trajectories, up to 5 rounds). Every trajectory ended with the attacker returning an empty or unusable reply (it declined or failed to produce a payload), so only 9 payloads were actually tested: 0 succeeded and 6 were flagged to the shopper. This says little about robustness; it mainly shows the attacker model will not reliably do this job. I did not try to work around that. Data: `results/adaptive/runs.jsonl`.
 
+**Strategy sweep (Sonnet 5.5).** Ten hand-written framings (ignore-previous, spoofed tool result, XML system tag, "verified owner", helpfulness appeal, debug mode, markdown instruction header, legal urgency, plain factual claim, instruction in the product name) x 3 goals (disparage, phishing, leak) x 11 queries = 330 runs, forced exposure, same judge. Script: `scripts/run_sweep.py`, data: `results/sweep/runs.jsonl`.
+
+| | Runs | Poisoned item retrieved | Hijacked | Warned the shopper |
+|---|---|---|---|---|
+| All framings | 330 | 330 | 0 | 320 |
+
+Zero hijacks in 330 runs puts the true rate for these framings below about 1% (95% upper limit). The 10 replies that did not warn were all the "plain factual claim" disparagement framing, where the model quietly left the claim out. Seven replies matched the phishing string check but only to say they were ignoring the offer; the judge correctly scored them as not hijacked. Still limited to one model, one catalog, fixed (non-adaptive) payloads and single-turn conversations.
+
 ## Roadmap
 
 - [x] Synthetic catalog and query set
@@ -159,7 +167,8 @@ Caveats: static payloads, one catalog, one run per condition, a single judge mod
 - [x] Stage 2: model runner and judge implemented
 - [x] Stage 2: full run (Sonnet 5.5 vs Haiku 5.5)
 - [x] Forced-exposure pilot (Sonnet 5.5 and Haiku 5.5, 39 queries each; see below)
-- [~] Adaptive attacker: LLM attacker loop built (`scripts/run_adaptive.py`); first pilot inconclusive, see below
+- [~] Adaptive attacker: LLM attacker loop built (`scripts/run_adaptive.py`); first pilot inconclusive
+- [x] Fixed strategy sweep: 10 framings x 3 goals x 11 queries, 0/330 hijacked
 - [x] LLM judge validated: 40 hand-labelled replies plus 12 positive controls (see below)
 - [ ] Stage 3: defenses and helpfulness cost
 - [ ] Cross-model comparison
