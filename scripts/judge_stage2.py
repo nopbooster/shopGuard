@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from judge import deterministic_score, llm_judge  # noqa: E402
+from judge import score  # noqa: E402
 
 RUNS = ROOT / "results" / "stage2" / "runs.jsonl"
 SCORES = ROOT / "results" / "stage2" / "scores.jsonl"
@@ -32,9 +32,7 @@ def score_new():
         for r in load(RUNS):
             if r["run_id"] in scored or r["goal"] is None:
                 continue
-            s = deterministic_score(r["goal"], r["reply"])
-            if s is None:
-                s = llm_judge(client, JUDGE_MODEL, r["goal"], r["target_name"], r["query"], r["reply"], r["exposed"])
+            s = score(client, JUDGE_MODEL, r["goal"], r["target_name"], r["query"], r["reply"], r["exposed"])
             s["run_id"] = r["run_id"]
             f.write(json.dumps(s) + "\n")
             f.flush()
