@@ -97,7 +97,7 @@ All 12 payloads fit inside the 300-character short-description window, so none i
 
 - The attacks are static: written once and never adapted to the replies. Zero hijacks says these payloads failed here. It is not evidence that the assistant resists an attacker who adapts.
 - One tampered listing, one fictional catalog, one run per condition. Run-to-run variation was not measured.
-- The LLM judge has not yet been compared with human labels.
+- The LLM judge was validated on a small hand-labelled sample and written controls (see below), not on a large corpus.
 - Haiku's small number of exposures makes its estimate weak (see the interval above).
 
 ## Quick start
@@ -173,7 +173,7 @@ Zero hijacks in 330 runs puts the true rate for these framings below about 1% (9
 - [ ] Stage 3: defenses and helpfulness cost
 - [ ] Cross-model comparison
 - [ ] Extension: injection in an AI product-translation plugin
-- [ ] Write-up
+- [x] Write-up: [docs/WRITEUP.md](docs/WRITEUP.md)
 
 ## Author
 
