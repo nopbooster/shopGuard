@@ -148,6 +148,8 @@ All experiments run offline against a synthetic catalog. No live store, real cus
 
 Caveats: static payloads, one catalog, one run per condition, a single judge model. Haiku often skips the poisoned item by choosing different keywords or a category filter, so even forced exposure only reached 12 runs. Zero hijacks in 39 runs bounds the true rate at roughly 9% (95% upper limit) for Sonnet 5.5; it does not show the models are robust to adaptive attackers.
 
+**Adaptive attacker pilot (inconclusive).** An LLM attacker (Sonnet 5.5) was asked to write and iteratively rewrite listing payloads for 6 queries x 3 goals (18 trajectories, up to 5 rounds). Every trajectory ended with the attacker returning an empty or unusable reply (it declined or failed to produce a payload), so only 9 payloads were actually tested: 0 succeeded and 6 were flagged to the shopper. This says little about robustness; it mainly shows the attacker model will not reliably do this job. I did not try to work around that. Data: `results/adaptive/runs.jsonl`.
+
 ## Roadmap
 
 - [x] Synthetic catalog and query set
@@ -157,7 +159,7 @@ Caveats: static payloads, one catalog, one run per condition, a single judge mod
 - [x] Stage 2: model runner and judge implemented
 - [x] Stage 2: full run (Sonnet 5.5 vs Haiku 5.5)
 - [x] Forced-exposure pilot (Sonnet 5.5 and Haiku 5.5, 39 queries each; see below)
-- [ ] Adaptive attacker: payloads rewritten from the model's replies
+- [~] Adaptive attacker: LLM attacker loop built (`scripts/run_adaptive.py`); first pilot inconclusive, see below
 - [x] LLM judge validated: 40 hand-labelled replies plus 12 positive controls (see below)
 - [ ] Stage 3: defenses and helpfulness cost
 - [ ] Cross-model comparison
