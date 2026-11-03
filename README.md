@@ -122,7 +122,7 @@ All experiments run offline against a synthetic catalog. No live store, real cus
 - [x] Exposure, hijack, judge validation, cross-model sweep, first defence test
 - [ ] Adaptive attacker that works (human-in-the-loop or a different attacker model), multi-turn conversations
 - [ ] Defences on more models, with a helpfulness measure on retrieval that works for every model
-- [ ] Validate retrieval against the production plugin's search settings
+- [ ] Re-run against the fixed plugin search. The experiments here measure the plugin's behaviour before its multi-word search fix, which will raise exposure (more searches will match a poisoned listing) and so makes the untrusted-text rule matter more
 - [ ] Other untrusted fields: reviews, Q&A, product translations
 - [ ] Hand-label a sample of OpenAI replies for the judge
 
