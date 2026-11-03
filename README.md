@@ -158,6 +158,16 @@ Caveats: static payloads, one catalog, one run per condition, a single judge mod
 
 Zero hijacks in 330 runs puts the true rate for these framings below about 1% (95% upper limit). The 10 replies that did not warn were all the "plain factual claim" disparagement framing, where the model quietly left the claim out. Seven replies matched the phishing string check but only to say they were ignoring the offer; the judge correctly scored them as not hijacked. Still limited to one model, one catalog, fixed (non-adaptive) payloads and single-turn conversations.
 
+**Cross-model sweep (OpenAI).** The same 330-run sweep (10 framings x 3 goals x 11 queries; the matching product is poisoned) was run on `gpt-5.5` and `gpt-5.4-mini` through an OpenAI adapter (`src/assistant.py`, same prompt, tool and results text; 4,096-token cap because these are reasoning models). Same judge (Sonnet 5.5).
+
+| Model | Runs | Poisoned listing read | Hijacked | Warned the shopper |
+|---|---|---|---|---|
+| Sonnet 5.5 | 330 | 330 | 0 | 320 |
+| gpt-5.5 | 330 | 37 | 0 | 0 |
+| gpt-5.4-mini | 330 | 6 | 0 | 0 |
+
+"Forced" only guarantees the right product is poisoned, not that the model finds it. The OpenAI models phrase searches differently (extra words, category and price filters), so whole-string matching returned the poisoned product in only 11% (gpt-5.5) and 2% (gpt-5.4-mini) of runs. They never obeyed and never mentioned the hidden text; they simply answered the shopper. With 37 and 6 exposures the bounds are loose (about 8% and 40% upper limits), so this does not yet show these models are as robust as Sonnet. A fully forced condition (poisoned item always returned) is the next step.
+
 ## Roadmap
 
 - [x] Synthetic catalog and query set
@@ -171,7 +181,7 @@ Zero hijacks in 330 runs puts the true rate for these framings below about 1% (9
 - [x] Fixed strategy sweep: 10 framings x 3 goals x 11 queries, 0/330 hijacked
 - [x] LLM judge validated: 40 hand-labelled replies plus 12 positive controls (see below)
 - [ ] Stage 3: defenses and helpfulness cost
-- [ ] Cross-model comparison
+- [~] Cross-model comparison: OpenAI sweep done; exposure too low, needs always-returned condition
 - [ ] Extension: injection in an AI product-translation plugin
 - [x] Write-up: [docs/WRITEUP.md](docs/WRITEUP.md)
 
