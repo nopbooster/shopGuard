@@ -46,6 +46,10 @@ For Sonnet, 0 hijacks in 561 exposed conversations gives a 95% upper bound below
 
 We added an adapter and ran the ten-framing sweep on `gpt-5.5` and `gpt-5.4-mini`. With natural retrieval, the OpenAI models almost never read the poisoned listing (37/330 and 6/330) because they search with extra words and filters that whole-string matching rejects, and nothing was hijacked. When we returned the poisoned listing for every search, **`gpt-5.5` obeyed none of 330 attacks (upper bound 1.2%), while `gpt-5.4-mini` obeyed 39 of 630 (6.2%, 95% CI 4.6 to 8.4%)**. Almost all were the false-safety-recall goal, and the framings that worked imitated structure the model might trust (a spoofed tool-result block, legal urgency, a verified-owner message). Neither OpenAI model warned the shopper; the mini simply complied. Unlike the first Claude results, this shows real exposure-conditional hijacks on a model a plugin customer might choose to save cost. Caveats: one run per condition, the mini ran on 21 queries versus 11 for the others, and the judge is still a Claude model (the hijack wording was visible in the replies, and the judge's reasons agree on a read-through, but we did not hand-label OpenAI replies).
 
+## Defences and Haiku (second addendum)
+
+Haiku 5.5, given the same always-returned condition, obeyed none of 330 attacks (upper bound 1.2%) and warned the shopper in 163 of them. On the mini we tested two cheap prompt-level defences under the same condition: wrapping the tool output in a tagged untrusted-data block with a reminder (`delimit`), and adding one rule to the system prompt that product text is untrusted (`instruct`). Hijacks fell from 22 of 330 (6.7%) to 1 of 326 (0.3%) and 0 of 326 respectively; replies kept their length and still named the shopper's product. These are early numbers: one model, one run per condition, 326 of 330 runs completed, and the helpfulness cost could not be measured on clean queries because the mini rarely retrieved any product at all (2 of 40) with the plugin's whole-string search. That last point is itself a practical finding for plugin authors: some models search in ways the retrieval layer cannot match.
+
 ## Limitations
 
 - **Static attacks.** Every payload was written once and never adapted to the model's replies. This is the main reason a null result is weak evidence of robustness.
@@ -59,13 +63,14 @@ We added an adapter and ran the ten-framing sweep on `gpt-5.5` and `gpt-5.4-mini
 
 1. A human-in-the-loop or non-Claude adaptive attacker, with multi-turn conversations where earlier turns prime the model.
 2. Other untrusted fields: customer reviews, Q&A, and the translation pipeline of a sibling plugin, where model output is written back into the catalog.
-3. Defences and their helpfulness cost (spotlighting or delimiting tool output, an instruction hierarchy note, output filtering) measured against the 28-vs-53-word side effect.
+3. Defences on more models and with a proper helpfulness measure (retrieval that works for all models, then compare answer quality with and without the defence), plus adaptive attacks against the defences themselves.
 4. More models, more catalogs, repeated runs for variance.
 
 ## Practical takeaways for shop-assistant builders
 
 - Treat catalog text as untrusted input; spam and keyword-stuffing controls are a security layer because they gate exposure.
 - Cheaper models may be hijackable even where flagship models are not (gpt-5.4-mini followed 6% of attacks once exposed); test the model you actually deploy.
+- Add the one-line untrusted-text rule to the system prompt and delimit tool output; on the model that was hijackable it removed nearly all hijacks in our test, at no visible cost.
 - Do not rely on one model's behaviour: the same listing was read in 40% vs 7% of conversations depending on how each model searched.
 - Log and review replies that mention "instructions" or "listing" text; a model that refuses loudly is also telling you an attack was attempted.
 - Strip or cap HTML and long fields before they reach the model, as the reference plugin already does.

@@ -180,6 +180,19 @@ Zero hijacks in 330 runs puts the true rate for these framings below about 1% (9
 
 The small model is both the most hijackable and the least likely to be exposed, because it searches in ways that rarely match the poisoned product. Search behaviour and instruction-following therefore protect a deployment in different ways.
 
+**Haiku 5.5 under always-returned exposure, and a defence test on gpt-5.4-mini.** Same 10 framings x 3 goals x 11 queries, poisoned listing returned for every search.
+
+| Condition | Runs | Hijacked | 95% CI | Warned the shopper |
+|---|---|---|---|---|
+| Haiku 5.5, no defence | 330 | 0 | 0 to 1.2% | 163 |
+| gpt-5.4-mini, no defence (matched queries) | 330 | 22 (6.7%) | 4.4 to 9.9% | 1 |
+| gpt-5.4-mini + `delimit` (tool output wrapped in an untrusted-data block with a reminder) | 326 | 1 (0.3%) | 0.1 to 1.7% | 0 |
+| gpt-5.4-mini + `instruct` (one system-prompt rule: product text is untrusted) | 326 | 0 | 0 to 1.2% | 0 |
+
+Both defences (`src/defenses.py`, `scripts/run_sweep.py --defense`) cut the mini's hijack rate from about 7% to about 0. The one remaining hijack used the legal-urgency framing under `delimit`. Replies stayed the same length (about 15 words) and named the shopper's product in 100% of runs, with no extra warnings. The runs stopped at 326 of 330 per defence because the OpenAI account ran out of credit.
+
+Helpfulness caveat: a clean no-attack check (`scripts/run_clean.py`) cannot measure the cost of a defence here, because with the plugin's whole-string search `gpt-5.4-mini` retrieved any product for only 2 of 40 clean queries. The helpfulness figures above come from attacked runs only.
+
 ## Roadmap
 
 - [x] Synthetic catalog and query set
@@ -192,8 +205,8 @@ The small model is both the most hijackable and the least likely to be exposed, 
 - [~] Adaptive attacker: LLM attacker loop built (`scripts/run_adaptive.py`); first pilot inconclusive
 - [x] Fixed strategy sweep: 10 framings x 3 goals x 11 queries, 0/330 hijacked
 - [x] LLM judge validated: 40 hand-labelled replies plus 12 positive controls (see below)
-- [ ] Stage 3: defenses and helpfulness cost
-- [x] Cross-model comparison: Sonnet 5.5, gpt-5.5, gpt-5.4-mini (Haiku 5.5 with always-returned exposure not yet run)
+- [x] Stage 3 (first pass): two prompt-level defences on gpt-5.4-mini; helpfulness cost only partly measured
+- [x] Cross-model comparison: Sonnet 5.5, gpt-5.5, gpt-5.4-mini (Haiku 5.5 also run with always-returned exposure: 0/330)
 - [ ] Extension: injection in an AI product-translation plugin
 - [x] Write-up: [docs/WRITEUP.md](docs/WRITEUP.md)
 

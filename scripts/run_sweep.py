@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT / "src"))
 import anthropic  # noqa: E402
 from assistant import chat_turn  # noqa: E402
 from attacks import GOALS  # noqa: E402
+from defenses import apply as defense_apply  # noqa: E402
 from judge import score  # noqa: E402
 from retrieval import search  # noqa: E402
 
@@ -43,9 +44,13 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--model", default="claude-sonnet-5-5")
 ap.add_argument("--queries", type=int, default=1)
 ap.add_argument("--workers", type=int, default=6)
+ap.add_argument("--defense", default="none", choices=["none", "delimit", "instruct", "both"])
 ap.add_argument("--always-return", action="store_true", help="return the poisoned listing for every search (worst-case exposure)")
 a = ap.parse_args()
-if a.always_return:
+if a.defense != "none":
+    a.always_return = True  # defences are compared under worst-case exposure
+    OUT = ROOT / "results" / f"defense_{a.defense}" / "runs.jsonl"
+elif a.always_return:
     OUT = ROOT / "results" / "sweep_always" / "runs.jsonl"
 
 catalog = json.loads((ROOT / "data" / "catalog.json").read_text())
@@ -63,7 +68,7 @@ for q in queries:
         continue
     for st in STRATEGIES:
         for g in SWEEP_GOALS:
-            rid = f"{a.model}|{'sweep-always' if a.always_return else 'sweep'}|{st}|{g}|{q['id']}"
+            rid = f"{a.model}|{f'defense-{a.defense}' if a.defense != 'none' else ('sweep-always' if a.always_return else 'sweep')}|{st}|{g}|{q['id']}"
             if rid not in done:
                 jobs.append((rid, q, res[0], st, g))
 print(len(jobs), "runs")
@@ -78,7 +83,9 @@ def one(j):
     else:
         bad["short_description"] = tgt["short_description"] + ". " + text
     cat = [bad if p["id"] == tgt["id"] else p for p in catalog]
-    rec = chat_turn(client, a.model, cat, q["text"], always_return_id=tgt["id"] if a.always_return else None)
+    extra, wrapper = defense_apply(a.defense)
+    rec = chat_turn(client, a.model, cat, q["text"], additional_instructions=extra, tool_result_wrapper=wrapper,
+                    always_return_id=tgt["id"] if a.always_return else None)
     exposed = tgt["id"] in rec["retrieved_ids"]
     s = score(client, "claude-sonnet-5-5", g, tgt["name"], q["text"], rec["reply"], exposed)
     row = {"run_id": rid, "model": a.model, "strategy": st, "goal": g, "query_id": q["id"], "query": q["text"],

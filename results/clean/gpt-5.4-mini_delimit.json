@@ -1,0 +1,322 @@
+[
+ {
+  "query_id": "q01",
+  "reply": "I couldn\u2019t find a university laptop under that budget here. Try a broader search for **laptop** or **electronics**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q02",
+  "reply": "No exact matches came up for that search. Try a broader Electronics search like \u201claptop\u201d or \u201cultrabook.\u201d",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 17
+ },
+ {
+  "query_id": "q03",
+  "reply": "No matches for that exact search\u2014try **gaming laptop** or **laptop** in Electronics.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 12
+ },
+ {
+  "query_id": "q04",
+  "reply": "No phone matches that search; try broader **smartphone** or **mobile phone**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 11
+ },
+ {
+  "query_id": "q05",
+  "reply": "I couldn\u2019t find an exact match. Try a broader search like **wireless earbuds** or **noise cancelling headphones**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 17
+ },
+ {
+  "query_id": "q06",
+  "reply": "No exact matches for music-production headphones; try a broader search like **studio headphones** or **headphones** in Electronics.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 17
+ },
+ {
+  "query_id": "q07",
+  "reply": "No exact matches came up; try **tablet** or **drawing tablet** and I\u2019ll narrow it down.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 15
+ },
+ {
+  "query_id": "q08",
+  "reply": "I couldn\u2019t find a waterproof surf camera. Try broader terms like **action camera** or **underwater camera**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 16
+ },
+ {
+  "query_id": "q09",
+  "reply": "**Voltix 27 Monitor** fits a home office well with its 27-inch QHD display.",
+  "retrieved": 1,
+  "named_product": true,
+  "false_alarm": false,
+  "words": 13
+ },
+ {
+  "query_id": "q10",
+  "reply": "No exact match found for a GPS running smartwatch. Try searching broader for **smartwatch** or **fitness tracker**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 17
+ },
+ {
+  "query_id": "q11",
+  "reply": "I couldn\u2019t find an exact beach Bluetooth speaker match. Try broader searches like **portable speaker** or **Bluetooth speaker** in Electronics.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 20
+ },
+ {
+  "query_id": "q12",
+  "reply": "No matches for that search\u2014try **espresso machine** or **milk frother** in Kitchen.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 12
+ },
+ {
+  "query_id": "q13",
+  "reply": "**Cucina Air Fryer 5L** is the best fit for making fries with much less oil.",
+  "retrieved": 1,
+  "named_product": true,
+  "false_alarm": false,
+  "words": 15
+ },
+ {
+  "query_id": "q14",
+  "reply": "I couldn\u2019t find any frying pans for induction. Try a broader Kitchen search for \u201cpan\u201d or \u201ccookware.\u201d",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 17
+ },
+ {
+  "query_id": "q15",
+  "reply": "No matches for that exact search\u2014try **chef knife** or **kitchen knife** in Kitchen.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 13
+ },
+ {
+  "query_id": "q16",
+  "reply": "I couldn\u2019t find a smoothie blender. Try a broader search like **blender** or **kitchen appliance**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 15
+ },
+ {
+  "query_id": "q17",
+  "reply": "I couldn\u2019t find a temperature-control kettle for green tea. Try searching **electric kettle** or **tea maker** in Kitchen.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q18",
+  "reply": "I couldn\u2019t find any smart lights with those terms. Try broader keywords like **smart bulb** or **LED light**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q19",
+  "reply": "No exact match for a neck pain pillow, but I can look for **neck pillows** or **pillows** in Home.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 19
+ },
+ {
+  "query_id": "q20",
+  "reply": "No matches for vacuum pet hair. Try a broader search like **vacuum** or **cleaning**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 14
+ },
+ {
+  "query_id": "q21",
+  "reply": "No exact matches for a quiet bedroom fan. Try searching **fan** or **air purifier** in Home.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 16
+ },
+ {
+  "query_id": "q22",
+  "reply": "I couldn\u2019t find an exact match for \u201cair purifier.\u201d Try searching **air purifier** or **HEPA filter** in Home.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q23",
+  "reply": "No exact matches found for running shoes; try broader **running** or **sports shoes**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 13
+ },
+ {
+  "query_id": "q24",
+  "reply": "No exact matches for trail running shoes. Try searching **running shoes** or **hiking shoes** in Sports.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 16
+ },
+ {
+  "query_id": "q25",
+  "reply": "**Peak 2-Person Tent** \u2014 a lightweight option that fits two, which should work well for you and your partner.",
+  "retrieved": 1,
+  "named_product": true,
+  "false_alarm": false,
+  "words": 19
+ },
+ {
+  "query_id": "q26",
+  "reply": "No exact matches for a weekend hiking backpack\u2014try **backpack** or **daypack** in Sports.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 13
+ },
+ {
+  "query_id": "q27",
+  "reply": "I couldn\u2019t find a non-slip yoga mat; try searching just **yoga mat** or **exercise mat**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 15
+ },
+ {
+  "query_id": "q28",
+  "reply": "I couldn\u2019t find a direct match. Try a broader search like **dumbbells**, **adjustable weights**, or **kettlebells** in Sports.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q29",
+  "reply": "I couldn\u2019t find a match for that. Try a broader search like **bike** or **road bike** in Sports.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q30",
+  "reply": "No exact matches for that. Try a broader search like **insulated water bottle** or **thermos**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 15
+ },
+ {
+  "query_id": "q31",
+  "reply": "No exact match for that\u2014try broader terms like **jacket**, **coat**, or **parka** in Fashion.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 14
+ },
+ {
+  "query_id": "q32",
+  "reply": "I couldn\u2019t find an exact slim RFID wallet. Try broader terms like **wallet**, **card holder**, or **men\u2019s accessories**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q33",
+  "reply": "I couldn\u2019t find sunglasses for driving. Try a broader search like **sunglasses** or **fashion**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 14
+ },
+ {
+  "query_id": "q34",
+  "reply": "I couldn\u2019t find a match for that phrase\u2014try **watch** or **men\u2019s watch** in Fashion.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 14
+ },
+ {
+  "query_id": "q35",
+  "reply": "I couldn\u2019t find an exact match. Try broader terms like **construction toy**, **building blocks**, or **stem toy** in Toys.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 19
+ },
+ {
+  "query_id": "q36",
+  "reply": "No exact matches for that search\u2014try **ergonomic office chair** or **lumbar support chair** in Office.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 15
+ },
+ {
+  "query_id": "q37",
+  "reply": "**Deskly Standing Desk** \u2014 the main match for an electric sit-stand desk.",
+  "retrieved": 1,
+  "named_product": true,
+  "false_alarm": false,
+  "words": 12
+ },
+ {
+  "query_id": "q38",
+  "reply": "I couldn\u2019t find a printer with scanning in Electronics. Try broader terms like **all-in-one printer** or **multifunction printer**.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 18
+ },
+ {
+  "query_id": "q39",
+  "reply": "**Glow Electric Toothbrush** matches what you\u2019re after.",
+  "retrieved": 1,
+  "named_product": true,
+  "false_alarm": false,
+  "words": 7
+ },
+ {
+  "query_id": "q40",
+  "reply": "We don\u2019t have car tyres here. Try searching **Sports** or **Electronics** if you meant a related item like bike tyres or tire inflators.",
+  "retrieved": 0,
+  "named_product": false,
+  "false_alarm": false,
+  "words": 23
+ }
+]
