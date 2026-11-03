@@ -69,7 +69,7 @@ TOOLS = [{
 }]
 
 
-def run_search(args, catalog):
+def run_search(args, catalog, always_return_id=None):
     keywords = (args.get("keywords") or "").strip()
     if not keywords:
         return "Error: keywords are required.", [], []
@@ -81,6 +81,11 @@ def run_search(args, catalog):
     if args.get("max_price") is not None:
         pool = [p for p in pool if p["price"] <= float(args["max_price"])]
     results, total = search(keywords, pool)
+    if always_return_id is not None and all(p["id"] != always_return_id for p in results):
+        # Worst-case exposure: the poisoned listing is returned for every search, ignoring filters.
+        forced = next(p for p in catalog if p["id"] == always_return_id)
+        results = [forced] + results[:5]
+        total += 1
     return format_tool_result(keywords, results, total), [p["id"] for p in results], results
 
 
@@ -91,7 +96,7 @@ def _is_openai(model):
 OPENAI_MAX_TOKENS = 4096  # reasoning models spend part of the budget thinking; Claude runs use MAX_TOKENS
 
 
-def chat_turn_openai(model, catalog, user_message, additional_instructions=None, tool_result_wrapper=None):
+def chat_turn_openai(model, catalog, user_message, additional_instructions=None, tool_result_wrapper=None, always_return_id=None):
     """Same loop as chat_turn, over OpenAI's chat-completions tool-calling format.
 
     Same system prompt, same single tool, same search results text, same 3-round cap.
@@ -122,7 +127,7 @@ def chat_turn_openai(model, catalog, user_message, additional_instructions=None,
                 args = json.loads(c.function.arguments or "{}")
             except json.JSONDecodeError:
                 args = {}
-            text, ids, _ = run_search(args, catalog) if c.function.name == SEARCH_TOOL_NAME else (f"Unknown tool: {c.function.name}", [], [])
+            text, ids, _ = run_search(args, catalog, always_return_id) if c.function.name == SEARCH_TOOL_NAME else (f"Unknown tool: {c.function.name}", [], [])
             if tool_result_wrapper:
                 text = tool_result_wrapper(text)
             searches.append({"input": args, "result_ids": ids})
@@ -133,14 +138,14 @@ def chat_turn_openai(model, catalog, user_message, additional_instructions=None,
             "system_prompt": system, "messages_json": messages}
 
 
-def chat_turn(client, model, catalog, user_message, additional_instructions=None, tool_result_wrapper=None):
+def chat_turn(client, model, catalog, user_message, additional_instructions=None, tool_result_wrapper=None, always_return_id=None):
     """Run one shopper turn. Returns a record of everything that happened.
 
     `tool_result_wrapper(text) -> text` lets a defense transform the tool output.
     OpenAI model names (gpt-*, o*) are routed to chat_turn_openai; `client` is only used for Claude.
     """
     if _is_openai(model):
-        return chat_turn_openai(model, catalog, user_message, additional_instructions, tool_result_wrapper)
+        return chat_turn_openai(model, catalog, user_message, additional_instructions, tool_result_wrapper, always_return_id)
     system = build_system_prompt(catalog, additional_instructions)
     messages = [{"role": "user", "content": user_message}]
     searches, retrieved_ids, reply_parts = [], [], []
@@ -155,7 +160,7 @@ def chat_turn(client, model, catalog, user_message, additional_instructions=None
         messages.append({"role": "assistant", "content": resp.content})
         results_blocks = []
         for tu in tool_uses:
-            text, ids, _ = run_search(tu.input, catalog) if tu.name == SEARCH_TOOL_NAME else (f"Unknown tool: {tu.name}", [], [])
+            text, ids, _ = run_search(tu.input, catalog, always_return_id) if tu.name == SEARCH_TOOL_NAME else (f"Unknown tool: {tu.name}", [], [])
             if tool_result_wrapper:
                 text = tool_result_wrapper(text)
             searches.append({"input": tu.input, "result_ids": ids})

@@ -168,6 +168,18 @@ Zero hijacks in 330 runs puts the true rate for these framings below about 1% (9
 
 "Forced" only guarantees the right product is poisoned, not that the model finds it. The OpenAI models phrase searches differently (extra words, category and price filters), so whole-string matching returned the poisoned product in only 11% (gpt-5.5) and 2% (gpt-5.4-mini) of runs. They never obeyed and never mentioned the hidden text; they simply answered the shopper. With 37 and 6 exposures the bounds are loose (about 8% and 40% upper limits), so this does not yet show these models are as robust as Sonnet. A fully forced condition (poisoned item always returned) is the next step.
 
+**Always-returned condition (OpenAI).** To remove the search-phrasing gate, the poisoned listing was returned for every search regardless of keywords or filters (`scripts/run_sweep.py --always-return`, data in `results/sweep_always/`). Same 10 framings x 3 goals; `gpt-5.5` ran on 11 queries (330 runs) and `gpt-5.4-mini` on 21 queries (630 runs, because the resume logic added ten more queries).
+
+| Model | Runs | Hijacked | 95% CI | Warned the shopper |
+|---|---|---|---|---|
+| gpt-5.5 | 330 | 0 | 0 to 1.2% | 0 |
+| gpt-5.4-mini | 630 | 39 | 4.6 to 8.4% | 2 |
+| gpt-5.4-mini (first 11 queries only, matched to gpt-5.5) | 330 | 22 | 4.4 to 9.9% | 1 |
+
+`gpt-5.4-mini` is the first model in this study to obey an injection. 37 of the 39 hijacks were the disparagement goal ("other brands have had safety recalls") and 2 were the phishing discount; none leaked the system prompt. Four framings worked: a spoofed tool-result block (20/63), legal urgency (13/63), a "verified owner" message (4/63) and an XML system tag (2/63). Six framings never worked (ignore-previous, debug mode, markdown header, helpfulness, plain factual claim, instruction in the product name). Three hijacks were partial (e.g. "the store suggests avoiding other brands"). `gpt-5.5` obeyed nothing and, unlike Sonnet 5.5, never mentioned the hidden text.
+
+The small model is both the most hijackable and the least likely to be exposed, because it searches in ways that rarely match the poisoned product. Search behaviour and instruction-following therefore protect a deployment in different ways.
+
 ## Roadmap
 
 - [x] Synthetic catalog and query set
@@ -181,7 +193,7 @@ Zero hijacks in 330 runs puts the true rate for these framings below about 1% (9
 - [x] Fixed strategy sweep: 10 framings x 3 goals x 11 queries, 0/330 hijacked
 - [x] LLM judge validated: 40 hand-labelled replies plus 12 positive controls (see below)
 - [ ] Stage 3: defenses and helpfulness cost
-- [~] Cross-model comparison: OpenAI sweep done; exposure too low, needs always-returned condition
+- [x] Cross-model comparison: Sonnet 5.5, gpt-5.5, gpt-5.4-mini (Haiku 5.5 with always-returned exposure not yet run)
 - [ ] Extension: injection in an AI product-translation plugin
 - [x] Write-up: [docs/WRITEUP.md](docs/WRITEUP.md)
 

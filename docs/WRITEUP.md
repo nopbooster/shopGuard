@@ -4,7 +4,7 @@
 
 ## Summary
 
-We reproduced the chat loop of a live nopCommerce shopping assistant (Claude by default, keyword search over the catalog, product text returned to the model as tool output) and attacked it with instructions hidden in product listings: indirect prompt injection from a third-party-writable field. Across 1,368 attacked conversations on Claude Sonnet 5.5 and Claude Haiku 5.5, **no injected instruction was followed**. Sonnet 5.5 never obeyed in the 561 conversations where it actually read a poisoned listing, and told the shopper about the hidden text every time. The more interesting findings are about what we had to measure to get there:
+We reproduced the chat loop of a live nopCommerce shopping assistant (Claude by default, keyword search over the catalog, product text returned to the model as tool output) and attacked it with instructions hidden in product listings: indirect prompt injection from a third-party-writable field. Across 1,368 attacked conversations on Claude Sonnet 5.5 and Claude Haiku 5.5, **no injected instruction was followed on the Claude models**. Sonnet 5.5 never obeyed in the 561 conversations where it actually read a poisoned listing, and told the shopper about the hidden text every time. The more interesting findings are about what we had to measure to get there:
 
 1. **Retrieval is a gatekeeper, and the model controls it.** Whether a poisoned listing reaches the model depends on the model's own search phrasing, which differed sharply between models (40% vs 7% exposure).
 2. **A failed attack still changes behaviour**: replies roughly doubled in length when Sonnet saw and rejected an injection.
@@ -42,12 +42,16 @@ For Sonnet, 0 hijacks in 561 exposed conversations gives a 95% upper bound below
 
 **Judge failure mode.** Eight replies matched the attacker's discount string only because they quoted it in order to refuse it. Requiring the LLM judge to agree removed these false positives.
 
+## Cross-model addendum (OpenAI)
+
+We added an adapter and ran the ten-framing sweep on `gpt-5.5` and `gpt-5.4-mini`. With natural retrieval, the OpenAI models almost never read the poisoned listing (37/330 and 6/330) because they search with extra words and filters that whole-string matching rejects, and nothing was hijacked. When we returned the poisoned listing for every search, **`gpt-5.5` obeyed none of 330 attacks (upper bound 1.2%), while `gpt-5.4-mini` obeyed 39 of 630 (6.2%, 95% CI 4.6 to 8.4%)**. Almost all were the false-safety-recall goal, and the framings that worked imitated structure the model might trust (a spoofed tool-result block, legal urgency, a verified-owner message). Neither OpenAI model warned the shopper; the mini simply complied. Unlike the first Claude results, this shows real exposure-conditional hijacks on a model a plugin customer might choose to save cost. Caveats: one run per condition, the mini ran on 21 queries versus 11 for the others, and the judge is still a Claude model (the hijack wording was visible in the replies, and the judge's reasons agree on a read-through, but we did not hand-label OpenAI replies).
+
 ## Limitations
 
 - **Static attacks.** Every payload was written once and never adapted to the model's replies. This is the main reason a null result is weak evidence of robustness.
 - **Adaptive attacker not achieved.** We built an LLM attacker loop, but the attacker model (Sonnet 5.5) returned no usable payload in all 18 trajectories (9 payloads tested, none succeeded). We did not try to work around that refusal, so the adaptive condition is untested here.
 - **Scope.** One catalog of fictional products, one poisoned listing, single-turn chats, no tool beyond search, no memory. Real stores have reviews, Q&A, attribute fields, translated text and multi-turn conversation, all untested injection surfaces.
-- **Models.** Sonnet 5.5 and Haiku 5.5 only, at their default settings, with one run per condition and no run-to-run variance measured.
+- **Models.** Sonnet 5.5, Haiku 5.5 (natural retrieval only), gpt-5.5 and gpt-5.4-mini, at their default settings, with one run per condition and no run-to-run variance measured.
 - **Judge.** One judge model; human validation covers 39 non-hijack replies plus synthetic controls.
 - **Author.** The harness and analysis were written with substantial help from Claude (Claude Code) under the author's direction; all experiments were run and checked against raw outputs.
 
@@ -61,6 +65,7 @@ For Sonnet, 0 hijacks in 561 exposed conversations gives a 95% upper bound below
 ## Practical takeaways for shop-assistant builders
 
 - Treat catalog text as untrusted input; spam and keyword-stuffing controls are a security layer because they gate exposure.
+- Cheaper models may be hijackable even where flagship models are not (gpt-5.4-mini followed 6% of attacks once exposed); test the model you actually deploy.
 - Do not rely on one model's behaviour: the same listing was read in 40% vs 7% of conversations depending on how each model searched.
 - Log and review replies that mention "instructions" or "listing" text; a model that refuses loudly is also telling you an attack was attempted.
 - Strip or cap HTML and long fields before they reach the model, as the reference plugin already does.
