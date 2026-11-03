@@ -95,7 +95,7 @@ All experiments run offline against a synthetic catalog. No live store, real cus
 
 ## Author
 
-Ayushman Bajracharya, [NopBooster](https://nopbooster.com) / Creatrix Technologies.
+[NopBooster](https://nopbooster.com)
 
 ## License
 
