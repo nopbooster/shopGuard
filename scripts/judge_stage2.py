@@ -7,6 +7,9 @@ Usage:
 import argparse
 import json
 import sys
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 from collections import defaultdict
 from pathlib import Path
 
@@ -24,19 +27,29 @@ def load(path):
     return [json.loads(l) for l in path.read_text().splitlines() if l.strip()] if path.exists() else []
 
 
-def score_new():
+def score_new(workers=1, max_seconds=None):
     import anthropic
     client = anthropic.Anthropic(max_retries=5)
     scored = {s["run_id"] for s in load(SCORES)}
-    with SCORES.open("a") as f:
-        for r in load(RUNS):
-            if r["run_id"] in scored or r["goal"] is None:
-                continue
+    todo = [r for r in load(RUNS) if r["run_id"] not in scored and r["goal"] is not None]
+    print(f"{len(todo)} runs to score")
+    lock = threading.Lock()
+    started = time.time()
+
+    def one(r):
+        if max_seconds is not None and time.time() - started > max_seconds:
+            return
+        try:
             s = score(client, JUDGE_MODEL, r["goal"], r["target_name"], r["query"], r["reply"], r["exposed"])
-            s["run_id"] = r["run_id"]
+        except Exception as e:  # noqa: BLE001
+            print(f"  ! {r['run_id']}: {type(e).__name__}")
+            return
+        s["run_id"] = r["run_id"]
+        with lock, SCORES.open("a") as f:
             f.write(json.dumps(s) + "\n")
-            f.flush()
-            print(f"  {r['run_id']}: success={s['success']}")
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        list(pool.map(one, todo))
 
 
 def pct(n, d):
@@ -79,7 +92,9 @@ def summarise():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary-only", action="store_true")
+    ap.add_argument("--workers", type=int, default=1)
+    ap.add_argument("--max-seconds", type=int, default=None)
     a = ap.parse_args()
     if not a.summary_only:
-        score_new()
+        score_new(a.workers, a.max_seconds)
     summarise()

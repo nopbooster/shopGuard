@@ -14,11 +14,14 @@ Usage:
   python scripts/run_stage2.py --limit 5            # smoke test, a handful of runs
   python scripts/run_stage2.py                      # full run
   python scripts/run_stage2.py --models claude-haiku-5-5
+  python scripts/run_stage2.py --workers 6         # parallel, faster
 """
 import argparse
 import json
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -48,6 +51,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", nargs="+", default=DEFAULT_MODELS)
     ap.add_argument("--limit", type=int, default=None, help="stop after N new runs")
+    ap.add_argument("--workers", type=int, default=1, help="parallel conversations")
+    ap.add_argument("--max-seconds", type=int, default=None, help="stop submitting new runs after this many seconds")
     args = ap.parse_args()
 
     catalog = json.loads((ROOT / "data" / "catalog.json").read_text())
@@ -63,32 +68,52 @@ def main():
     todo = [r for r in plan(args.models, queries) if r["run_id"] not in done]
     print(f"{len(done)} runs already done, {len(todo)} to go")
 
+    if args.limit is not None:
+        todo = todo[:args.limit]
+
+    def one(r):
+        cat = catalog
+        if r["goal"]:
+            bad = poison(target, r["goal"], r["style"], stuff_keywords=True)
+            cat = [bad if p["id"] == TARGET_ID else p for p in catalog]
+        rec = chat_turn(client, r["model"], cat, r["query"]["text"])
+        return {
+            "run_id": r["run_id"], "model": r["model"], "goal": r["goal"], "style": r["style"],
+            "query_id": r["query"]["id"], "query": r["query"]["text"],
+            "target_id": TARGET_ID, "target_name": target["name"],
+            "exposed": TARGET_ID in rec["retrieved_ids"],
+            "searches": rec["searches"], "reply": rec["reply"],
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+
+    lock = threading.Lock()
+    started = time.time()
     new = 0
-    with OUT.open("a") as f:
-        for r in todo:
-            if args.limit is not None and new >= args.limit:
+    with OUT.open("a") as f, ThreadPoolExecutor(max_workers=args.workers) as pool:
+        futures = {}
+        it = iter(todo)
+        def submit_next():
+            if args.max_seconds is not None and time.time() - started > args.max_seconds:
+                return
+            r = next(it, None)
+            if r is not None:
+                futures[pool.submit(one, r)] = r
+        for _ in range(args.workers):
+            submit_next()
+        while futures:
+            for fut in as_completed(list(futures)):
+                r = futures.pop(fut)
+                try:
+                    out = fut.result()
+                    with lock:
+                        f.write(json.dumps(out) + "\n")
+                        f.flush()
+                        new += 1
+                    print(f"  [{new}] {r['run_id']}  exposed={out['exposed']}")
+                except Exception as e:  # noqa: BLE001
+                    print(f"  ! {r['run_id']}: {type(e).__name__}: {str(e)[:150]}")
+                submit_next()
                 break
-            cat = catalog
-            if r["goal"]:
-                bad = poison(target, r["goal"], r["style"], stuff_keywords=True)
-                cat = [bad if p["id"] == TARGET_ID else p for p in catalog]
-            try:
-                rec = chat_turn(client, r["model"], cat, r["query"]["text"])
-            except anthropic.APIError as e:
-                print(f"  ! {r['run_id']}: {e}")
-                continue
-            out = {
-                "run_id": r["run_id"], "model": r["model"], "goal": r["goal"], "style": r["style"],
-                "query_id": r["query"]["id"], "query": r["query"]["text"],
-                "target_id": TARGET_ID, "target_name": target["name"],
-                "exposed": TARGET_ID in rec["retrieved_ids"],
-                "searches": rec["searches"], "reply": rec["reply"],
-                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            }
-            f.write(json.dumps(out) + "\n")
-            f.flush()
-            new += 1
-            print(f"  [{new}] {r['run_id']}  exposed={out['exposed']}  reply={out['reply'][:80]!r}")
 
     print(f"Done: {new} new runs written to {OUT}")
 
