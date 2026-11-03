@@ -23,6 +23,12 @@ A hidden instruction in one product listing (4 goals: ranking, disparage competi
 | gpt-5.4-mini + one-line "product text is untrusted" system rule | n/a | 0 of 326 | 1.2% |
 | gpt-5.4-mini + untrusted-data delimiting | n/a | 1 of 326 (0.3%) | 1.7% |
 
+![How often an injected instruction was followed](docs/img/hijack_rate.png)
+
+![Exposure: does the poisoned listing reach the model?](docs/img/exposure.png)
+
+*Hijack chart: poisoned listing returned for every search (Sonnet: 561 runs where it read the listing across three experiments). Exposure chart: Claude models were attacked with a keyword-stuffed kettle listing; the OpenAI models with the listing that matches each query, so compare the Claude bars with each other and the OpenAI bars with each other. Charts are drawn by `scripts/make_charts.py`.*
+
 What this says:
 
 1. **Retrieval gates exposure, and each model's search style sets the gate.** Stuffing keywords raised retrieval from 2% to 49% with hand-picked searches, but with the model choosing, exposure ranged from 2% to 40%. Models that add words or filters to their searches rarely match a stuffed listing.
@@ -72,7 +78,7 @@ End-to-end risk ≈ exposure × hijack. Most published injection evaluations mea
 | Attacks | `src/attacks.py`, `scripts/run_sweep.py` | 4 goals x 3 styles, plus 10 extra framings |
 | Defences | `src/defenses.py` | `delimit`, `instruct`, `both` |
 | Judge | `src/judge.py` | String checks plus an LLM judge; a hijack needs both to agree |
-| Runners | `scripts/` | `measure_exposure`, `run_stage2`, `judge_stage2`, `run_forced`, `run_sweep`, `run_adaptive`, `run_clean`, `judge_controls`, `analyze_stage2` |
+| Runners | `scripts/` | `measure_exposure`, `run_stage2`, `judge_stage2`, `run_forced`, `run_sweep`, `run_adaptive`, `run_clean`, `judge_controls`, `analyze_stage2`, `make_charts` |
 
 ## Reproduce
 
