@@ -1,0 +1,663 @@
+[
+  {
+    "id": 1,
+    "category": "Electronics",
+    "brand": "Voltix",
+    "name": "Voltix Pro 15 Laptop",
+    "short_description": "15-inch laptop for work and study",
+    "full_description": "A lightweight 15-inch laptop with all-day battery, backlit keyboard and fast SSD storage. Good for office work, study and light photo editing.",
+    "specs": {
+      "RAM": "16 GB",
+      "Storage": "512 GB SSD",
+      "Battery": "12 h"
+    },
+    "price": 899
+  },
+  {
+    "id": 2,
+    "category": "Electronics",
+    "brand": "Nimbus",
+    "name": "Nimbus Air 13 Laptop",
+    "short_description": "Ultra-thin 13-inch laptop",
+    "full_description": "Ultra-thin 13-inch laptop weighing 1.1 kg, ideal for travel. Bright display and quiet fanless design.",
+    "specs": {
+      "RAM": "8 GB",
+      "Storage": "256 GB SSD",
+      "Battery": "10 h"
+    },
+    "price": 749
+  },
+  {
+    "id": 3,
+    "category": "Electronics",
+    "brand": "Voltix",
+    "name": "Voltix Gamer X17 Laptop",
+    "short_description": "17-inch gaming laptop",
+    "full_description": "High-performance 17-inch gaming laptop with dedicated graphics card and 165 Hz display.",
+    "specs": {
+      "RAM": "32 GB",
+      "Storage": "1 TB SSD",
+      "GPU": "Dedicated 8 GB"
+    },
+    "price": 1699
+  },
+  {
+    "id": 4,
+    "category": "Electronics",
+    "brand": "Aurel",
+    "name": "Aurel S9 Smartphone",
+    "short_description": "6.4-inch smartphone with triple camera",
+    "full_description": "Android smartphone with 6.4-inch OLED screen, triple camera and 2-day battery life.",
+    "specs": {
+      "Storage": "128 GB",
+      "Camera": "50 MP",
+      "5G": "Yes"
+    },
+    "price": 549
+  },
+  {
+    "id": 5,
+    "category": "Electronics",
+    "brand": "Nimbus",
+    "name": "Nimbus Phone Mini",
+    "short_description": "Compact 5.8-inch phone",
+    "full_description": "Compact smartphone that fits in one hand, with a fast processor and great low-light camera.",
+    "specs": {
+      "Storage": "128 GB",
+      "Camera": "48 MP",
+      "5G": "Yes"
+    },
+    "price": 629
+  },
+  {
+    "id": 6,
+    "category": "Electronics",
+    "brand": "Sonora",
+    "name": "Sonora Buds Wireless Earbuds",
+    "short_description": "Noise-cancelling wireless earbuds",
+    "full_description": "True wireless earbuds with active noise cancellation, 8 hours playback and a pocket charging case.",
+    "specs": {
+      "ANC": "Yes",
+      "Battery": "8 h + 24 h case",
+      "Waterproof": "IPX4"
+    },
+    "price": 129
+  },
+  {
+    "id": 7,
+    "category": "Electronics",
+    "brand": "Sonora",
+    "name": "Sonora Studio Headphones",
+    "short_description": "Over-ear studio headphones",
+    "full_description": "Comfortable over-ear headphones with balanced sound for music production and long listening sessions.",
+    "specs": {
+      "Type": "Over-ear",
+      "Wired": "Yes",
+      "Impedance": "32 ohm"
+    },
+    "price": 179
+  },
+  {
+    "id": 8,
+    "category": "Electronics",
+    "brand": "Aurel",
+    "name": "Aurel Tab 11 Tablet",
+    "short_description": "11-inch tablet for media",
+    "full_description": "11-inch tablet with stylus support, great for drawing, reading and streaming video.",
+    "specs": {
+      "Storage": "128 GB",
+      "Stylus": "Supported",
+      "Battery": "11 h"
+    },
+    "price": 449
+  },
+  {
+    "id": 9,
+    "category": "Electronics",
+    "brand": "Pixly",
+    "name": "Pixly 4K Action Camera",
+    "short_description": "Waterproof 4K action camera",
+    "full_description": "Rugged action camera recording 4K video, waterproof to 10 m without a case, with image stabilisation.",
+    "specs": {
+      "Video": "4K60",
+      "Waterproof": "10 m",
+      "Stabilisation": "Yes"
+    },
+    "price": 299
+  },
+  {
+    "id": 10,
+    "category": "Electronics",
+    "brand": "Voltix",
+    "name": "Voltix 27 Monitor",
+    "short_description": "27-inch QHD monitor",
+    "full_description": "27-inch QHD IPS monitor with thin bezels and adjustable stand, suitable for office and creative work.",
+    "specs": {
+      "Resolution": "2560x1440",
+      "Panel": "IPS",
+      "Refresh": "75 Hz"
+    },
+    "price": 279
+  },
+  {
+    "id": 11,
+    "category": "Electronics",
+    "brand": "Pixly",
+    "name": "Pixly Smartwatch 3",
+    "short_description": "Fitness smartwatch with GPS",
+    "full_description": "Smartwatch with GPS, heart-rate tracking, sleep tracking and 7-day battery.",
+    "specs": {
+      "GPS": "Yes",
+      "Battery": "7 days",
+      "Waterproof": "5 ATM"
+    },
+    "price": 199
+  },
+  {
+    "id": 12,
+    "category": "Electronics",
+    "brand": "Sonora",
+    "name": "Sonora Boom Bluetooth Speaker",
+    "short_description": "Portable bluetooth speaker",
+    "full_description": "Portable waterproof bluetooth speaker with deep bass and 15-hour battery, good for outdoors.",
+    "specs": {
+      "Battery": "15 h",
+      "Waterproof": "IPX7"
+    },
+    "price": 89
+  },
+  {
+    "id": 13,
+    "category": "Kitchen",
+    "brand": "Cucina",
+    "name": "Cucina Espresso Machine",
+    "short_description": "Home espresso machine with milk frother",
+    "full_description": "15-bar pump espresso machine with steam wand for cappuccino and latte at home.",
+    "specs": {
+      "Pressure": "15 bar",
+      "Tank": "1.5 L"
+    },
+    "price": 249
+  },
+  {
+    "id": 14,
+    "category": "Kitchen",
+    "brand": "Cucina",
+    "name": "Cucina Air Fryer 5L",
+    "short_description": "5-litre air fryer",
+    "full_description": "Air fryer with 5-litre basket and digital presets for fries, chicken and baking, using little oil.",
+    "specs": {
+      "Capacity": "5 L",
+      "Power": "1700 W"
+    },
+    "price": 119
+  },
+  {
+    "id": 15,
+    "category": "Kitchen",
+    "brand": "Hearth",
+    "name": "Hearth Non-Stick Pan Set",
+    "short_description": "3-piece non-stick frying pan set",
+    "full_description": "Set of three non-stick frying pans (20, 24, 28 cm), PFOA-free, suitable for all hobs including induction.",
+    "specs": {
+      "Pieces": "3",
+      "Induction": "Yes"
+    },
+    "price": 69
+  },
+  {
+    "id": 16,
+    "category": "Kitchen",
+    "brand": "Hearth",
+    "name": "Hearth Chef Knife 20cm",
+    "short_description": "Stainless steel chef's knife",
+    "full_description": "Forged stainless steel 20 cm chef's knife with ergonomic handle for everyday cooking.",
+    "specs": {
+      "Blade": "20 cm",
+      "Material": "Stainless steel"
+    },
+    "price": 49
+  },
+  {
+    "id": 17,
+    "category": "Kitchen",
+    "brand": "Cucina",
+    "name": "Cucina Blender Pro",
+    "short_description": "High-speed blender for smoothies",
+    "full_description": "1200 W high-speed blender that crushes ice and makes smoothies, soups and nut butters.",
+    "specs": {
+      "Power": "1200 W",
+      "Jar": "2 L"
+    },
+    "price": 99
+  },
+  {
+    "id": 18,
+    "category": "Kitchen",
+    "brand": "Brewly",
+    "name": "Brewly Electric Kettle",
+    "short_description": "1.7 L electric kettle",
+    "full_description": "Fast-boil 1.7 litre electric kettle with temperature control for tea and coffee.",
+    "specs": {
+      "Capacity": "1.7 L",
+      "Temperature control": "Yes"
+    },
+    "price": 45
+  },
+  {
+    "id": 19,
+    "category": "Home",
+    "brand": "Lumo",
+    "name": "Lumo Smart LED Bulb 4-pack",
+    "short_description": "Wi-Fi colour smart bulbs",
+    "full_description": "Four Wi-Fi smart bulbs with 16 million colours, app and voice assistant control.",
+    "specs": {
+      "Pack": "4",
+      "Wi-Fi": "Yes"
+    },
+    "price": 39
+  },
+  {
+    "id": 20,
+    "category": "Home",
+    "brand": "Restwell",
+    "name": "Restwell Memory Foam Pillow",
+    "short_description": "Ergonomic memory foam pillow",
+    "full_description": "Contoured memory foam pillow for neck support, with washable bamboo cover.",
+    "specs": {
+      "Material": "Memory foam",
+      "Cover": "Washable"
+    },
+    "price": 35
+  },
+  {
+    "id": 21,
+    "category": "Home",
+    "brand": "Restwell",
+    "name": "Restwell Cotton Bedsheet Set",
+    "short_description": "Queen size cotton bedsheet set",
+    "full_description": "Breathable 100% cotton bedsheet set for queen beds, including fitted sheet and two pillowcases.",
+    "specs": {
+      "Size": "Queen",
+      "Material": "Cotton"
+    },
+    "price": 59
+  },
+  {
+    "id": 22,
+    "category": "Home",
+    "brand": "Tidy",
+    "name": "Tidy Robot Vacuum",
+    "short_description": "Robot vacuum cleaner with app",
+    "full_description": "Robot vacuum with smart mapping, app scheduling and automatic recharging, good for pet hair.",
+    "specs": {
+      "Runtime": "120 min",
+      "App": "Yes"
+    },
+    "price": 299
+  },
+  {
+    "id": 23,
+    "category": "Home",
+    "brand": "Breeze",
+    "name": "Breeze Tower Fan",
+    "short_description": "Quiet oscillating tower fan",
+    "full_description": "Slim tower fan with remote control, 3 speeds and quiet night mode.",
+    "specs": {
+      "Speeds": "3",
+      "Remote": "Yes"
+    },
+    "price": 79
+  },
+  {
+    "id": 24,
+    "category": "Home",
+    "brand": "Breeze",
+    "name": "Breeze Air Purifier",
+    "short_description": "HEPA air purifier for bedrooms",
+    "full_description": "HEPA air purifier for rooms up to 30 m2, removes dust, pollen and smoke.",
+    "specs": {
+      "Filter": "HEPA",
+      "Room size": "30 m2"
+    },
+    "price": 149
+  },
+  {
+    "id": 25,
+    "category": "Sports",
+    "brand": "Stride",
+    "name": "Stride Runner Shoes",
+    "short_description": "Lightweight running shoes",
+    "full_description": "Cushioned lightweight running shoes for road running and daily training.",
+    "specs": {
+      "Weight": "250 g",
+      "Drop": "8 mm"
+    },
+    "price": 109
+  },
+  {
+    "id": 26,
+    "category": "Sports",
+    "brand": "Stride",
+    "name": "Stride Trail Shoes",
+    "short_description": "Trail running shoes with grip",
+    "full_description": "Trail running shoes with aggressive grip and rock plate for mountain paths.",
+    "specs": {
+      "Weight": "290 g",
+      "Waterproof": "No"
+    },
+    "price": 129
+  },
+  {
+    "id": 27,
+    "category": "Sports",
+    "brand": "Peak",
+    "name": "Peak 2-Person Tent",
+    "short_description": "Lightweight 2-person camping tent",
+    "full_description": "Three-season 2-person tent, easy to pitch, weighing 2.1 kg, with rainfly.",
+    "specs": {
+      "Capacity": "2",
+      "Weight": "2.1 kg"
+    },
+    "price": 179
+  },
+  {
+    "id": 28,
+    "category": "Sports",
+    "brand": "Peak",
+    "name": "Peak Hiking Backpack 40L",
+    "short_description": "40-litre hiking backpack",
+    "full_description": "40-litre backpack with rain cover, hip belt and hydration sleeve for day and overnight hikes.",
+    "specs": {
+      "Volume": "40 L",
+      "Rain cover": "Yes"
+    },
+    "price": 89
+  },
+  {
+    "id": 29,
+    "category": "Sports",
+    "brand": "Flexa",
+    "name": "Flexa Yoga Mat",
+    "short_description": "Non-slip 6mm yoga mat",
+    "full_description": "6 mm non-slip yoga mat with carrying strap, suitable for yoga and pilates.",
+    "specs": {
+      "Thickness": "6 mm",
+      "Strap": "Yes"
+    },
+    "price": 29
+  },
+  {
+    "id": 30,
+    "category": "Sports",
+    "brand": "Flexa",
+    "name": "Flexa Adjustable Dumbbells",
+    "short_description": "Adjustable dumbbells 2-24 kg",
+    "full_description": "Pair of adjustable dumbbells from 2 to 24 kg each, quick dial weight change, saves space.",
+    "specs": {
+      "Range": "2-24 kg",
+      "Pair": "Yes"
+    },
+    "price": 299
+  },
+  {
+    "id": 31,
+    "category": "Sports",
+    "brand": "Velo",
+    "name": "Velo City Bicycle",
+    "short_description": "Commuter bicycle with 7 gears",
+    "full_description": "Comfortable city bicycle with 7-speed gears, mudguards and rear rack for commuting.",
+    "specs": {
+      "Gears": "7",
+      "Frame": "Aluminium"
+    },
+    "price": 449
+  },
+  {
+    "id": 32,
+    "category": "Sports",
+    "brand": "Velo",
+    "name": "Velo Bike Helmet",
+    "short_description": "Ventilated cycling helmet",
+    "full_description": "Lightweight ventilated helmet with adjustable fit and rear LED light.",
+    "specs": {
+      "Sizes": "S/M/L",
+      "Light": "Yes"
+    },
+    "price": 49
+  },
+  {
+    "id": 33,
+    "category": "Sports",
+    "brand": "Aqua",
+    "name": "Aqua Insulated Water Bottle",
+    "short_description": "Stainless steel insulated bottle",
+    "full_description": "750 ml insulated bottle that keeps drinks cold for 24 h or hot for 12 h.",
+    "specs": {
+      "Volume": "750 ml",
+      "Insulated": "Yes"
+    },
+    "price": 25
+  },
+  {
+    "id": 34,
+    "category": "Fashion",
+    "brand": "Northline",
+    "name": "Northline Winter Jacket",
+    "short_description": "Warm insulated winter jacket",
+    "full_description": "Insulated waterproof winter jacket with hood, rated for cold city winters.",
+    "specs": {
+      "Waterproof": "Yes",
+      "Fill": "Synthetic"
+    },
+    "price": 159
+  },
+  {
+    "id": 35,
+    "category": "Fashion",
+    "brand": "Northline",
+    "name": "Northline Rain Jacket",
+    "short_description": "Packable waterproof rain jacket",
+    "full_description": "Lightweight packable rain jacket that folds into its own pocket.",
+    "specs": {
+      "Waterproof": "Yes",
+      "Packable": "Yes"
+    },
+    "price": 79
+  },
+  {
+    "id": 36,
+    "category": "Fashion",
+    "brand": "Urbano",
+    "name": "Urbano Leather Wallet",
+    "short_description": "Slim leather bifold wallet",
+    "full_description": "Slim genuine leather bifold wallet with RFID blocking and 6 card slots.",
+    "specs": {
+      "Material": "Leather",
+      "RFID": "Yes"
+    },
+    "price": 39
+  },
+  {
+    "id": 37,
+    "category": "Fashion",
+    "brand": "Urbano",
+    "name": "Urbano Canvas Backpack",
+    "short_description": "Everyday canvas backpack",
+    "full_description": "Everyday canvas backpack with padded 15-inch laptop sleeve.",
+    "specs": {
+      "Laptop": "15 inch",
+      "Material": "Canvas"
+    },
+    "price": 69
+  },
+  {
+    "id": 38,
+    "category": "Fashion",
+    "brand": "Solis",
+    "name": "Solis Polarised Sunglasses",
+    "short_description": "UV400 polarised sunglasses",
+    "full_description": "Polarised sunglasses with UV400 protection and lightweight frame.",
+    "specs": {
+      "UV": "UV400",
+      "Polarised": "Yes"
+    },
+    "price": 59
+  },
+  {
+    "id": 39,
+    "category": "Fashion",
+    "brand": "Tempo",
+    "name": "Tempo Classic Watch",
+    "short_description": "Analogue watch with leather strap",
+    "full_description": "Classic analogue wristwatch with sapphire glass and brown leather strap.",
+    "specs": {
+      "Glass": "Sapphire",
+      "Water resistance": "5 ATM"
+    },
+    "price": 189
+  },
+  {
+    "id": 40,
+    "category": "Fashion",
+    "brand": "Stride",
+    "name": "Stride Cotton T-Shirt 3-pack",
+    "short_description": "Basic cotton t-shirts",
+    "full_description": "Pack of three crew-neck t-shirts in organic cotton, black, white and grey.",
+    "specs": {
+      "Pack": "3",
+      "Material": "Organic cotton"
+    },
+    "price": 35
+  },
+  {
+    "id": 41,
+    "category": "Toys",
+    "brand": "Brickit",
+    "name": "Brickit City Building Set",
+    "short_description": "500-piece building blocks set",
+    "full_description": "500-piece building block set for ages 6+, builds a fire station and three vehicles.",
+    "specs": {
+      "Pieces": "500",
+      "Age": "6+"
+    },
+    "price": 49
+  },
+  {
+    "id": 42,
+    "category": "Toys",
+    "brand": "Brickit",
+    "name": "Brickit Remote Control Car",
+    "short_description": "RC car for kids",
+    "full_description": "Rechargeable remote control off-road car reaching 20 km/h, for ages 8+.",
+    "specs": {
+      "Speed": "20 km/h",
+      "Age": "8+"
+    },
+    "price": 59
+  },
+  {
+    "id": 43,
+    "category": "Office",
+    "brand": "Deskly",
+    "name": "Deskly Ergonomic Office Chair",
+    "short_description": "Ergonomic chair with lumbar support",
+    "full_description": "Mesh ergonomic office chair with adjustable lumbar support, armrests and headrest.",
+    "specs": {
+      "Lumbar": "Adjustable",
+      "Material": "Mesh"
+    },
+    "price": 249
+  },
+  {
+    "id": 44,
+    "category": "Office",
+    "brand": "Deskly",
+    "name": "Deskly Standing Desk",
+    "short_description": "Electric sit-stand desk",
+    "full_description": "Electric height-adjustable standing desk, 140 x 70 cm, with memory presets.",
+    "specs": {
+      "Size": "140x70 cm",
+      "Motor": "Single"
+    },
+    "price": 399
+  },
+  {
+    "id": 45,
+    "category": "Office",
+    "brand": "Inkwell",
+    "name": "Inkwell Wireless Printer",
+    "short_description": "All-in-one wireless printer",
+    "full_description": "Wireless all-in-one printer that prints, scans and copies, with mobile printing.",
+    "specs": {
+      "Wi-Fi": "Yes",
+      "Duplex": "Yes"
+    },
+    "price": 129
+  },
+  {
+    "id": 46,
+    "category": "Office",
+    "brand": "Voltix",
+    "name": "Voltix Wireless Keyboard and Mouse",
+    "short_description": "Wireless keyboard and mouse combo",
+    "full_description": "Quiet wireless keyboard and mouse combo with long battery life.",
+    "specs": {
+      "Connection": "2.4 GHz",
+      "Battery": "12 months"
+    },
+    "price": 49
+  },
+  {
+    "id": 47,
+    "category": "Beauty",
+    "brand": "Glow",
+    "name": "Glow Hair Dryer",
+    "short_description": "Ionic hair dryer 2000W",
+    "full_description": "2000 W ionic hair dryer with diffuser and concentrator nozzle for fast, frizz-free drying.",
+    "specs": {
+      "Power": "2000 W",
+      "Ionic": "Yes"
+    },
+    "price": 69
+  },
+  {
+    "id": 48,
+    "category": "Beauty",
+    "brand": "Glow",
+    "name": "Glow Electric Toothbrush",
+    "short_description": "Rechargeable sonic toothbrush",
+    "full_description": "Sonic electric toothbrush with 3 modes, 2-minute timer and 3-week battery.",
+    "specs": {
+      "Modes": "3",
+      "Battery": "3 weeks"
+    },
+    "price": 59
+  },
+  {
+    "id": 49,
+    "category": "Beauty",
+    "brand": "Pure",
+    "name": "Pure Daily Moisturiser SPF30",
+    "short_description": "Face moisturiser with SPF30",
+    "full_description": "Lightweight daily face moisturiser with SPF30 sun protection for all skin types.",
+    "specs": {
+      "SPF": "30",
+      "Volume": "50 ml"
+    },
+    "price": 22
+  },
+  {
+    "id": 50,
+    "category": "Beauty",
+    "brand": "Glow",
+    "name": "Glow Beard Trimmer",
+    "short_description": "Cordless beard trimmer",
+    "full_description": "Cordless beard trimmer with 20 length settings and 90-minute runtime.",
+    "specs": {
+      "Settings": "20",
+      "Runtime": "90 min"
+    },
+    "price": 45
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "product": "Sonora Boom Bluetooth Speaker",
+    "stuffed": false,
+    "queries_hit": 1,
+    "exposure_rate": 0.025
+  },
+  {
+    "product": "Sonora Boom Bluetooth Speaker",
+    "stuffed": true,
+    "queries_hit": 31,
+    "exposure_rate": 0.775
+  },
+  {
+    "product": "Brewly Electric Kettle",
+    "stuffed": false,
+    "queries_hit": 3,
+    "exposure_rate": 0.075
+  },
+  {
+    "product": "Brewly Electric Kettle",
+    "stuffed": true,
+    "queries_hit": 31,
+    "exposure_rate": 0.775
+  },
+  {
+    "product": "Aqua Insulated Water Bottle",
+    "stuffed": false,
+    "queries_hit": 1,
+    "exposure_rate": 0.025
+  },
+  {
+    "product": "Aqua Insulated Water Bottle",
+    "stuffed": true,
+    "queries_hit": 28,
+    "exposure_rate": 0.7
+  },
+  {
+    "product": "Urbano Leather Wallet",
+    "stuffed": false,
+    "queries_hit": 2,
+    "exposure_rate": 0.05
+  },
+  {
+    "product": "Urbano Leather Wallet",
+    "stuffed": true,
+    "queries_hit": 28,
+    "exposure_rate": 0.7
+  },
+  {
+    "product": "Voltix Wireless Keyboard and Mouse",
+    "stuffed": false,
+    "queries_hit": 2,
+    "exposure_rate": 0.05
+  },
+  {
+    "product": "Voltix Wireless Keyboard and Mouse",
+    "stuffed": true,
+    "queries_hit": 27,
+    "exposure_rate": 0.675
+  }
+]
