@@ -2,7 +2,7 @@
 
 **Measuring indirect prompt injection in production-style AI shopping assistants.**
 
-> **Status: work in progress.** Stage 1 (retrieval exposure) is complete. Stage 2 (model hijack rate) and Stage 3 (defenses) are being built. Results below are preliminary and will be updated as the study progresses.
+> **Status: work in progress.** Stage 1 (retrieval exposure) and Stage 2 (end-to-end runs on two models) are complete. A stronger, adaptive attacker and the defense comparison (Stage 3) are next. Results below are preliminary.
 
 ## Why this exists
 
@@ -51,7 +51,8 @@ End-to-end risk ≈ exposure × hijack. Most published injection evaluations mea
 | Exposure | `scripts/measure_exposure.py` | Stage 1 measurement, no API calls |
 | Assistant | `src/assistant.py` | Python re-implementation of the production chat turn: verbatim system prompt, identical `search_products` tool schema, 3-round tool loop |
 | Runner | `scripts/run_stage2.py` | Stage 2: end-to-end runs where the model chooses its own search keywords; clean baseline included; resumable |
-| Judge | `src/judge.py`, `scripts/judge_stage2.py` | String checks for phishing and prompt leakage; LLM judge for ranking manipulation and disparagement; summary tables |
+| Judge | `src/judge.py`, `scripts/judge_stage2.py` | String checks for phishing and prompt leakage; LLM judge for ranking manipulation and disparagement; a string match only counts when the LLM judge agrees |
+| Analysis | `scripts/analyze_stage2.py` | Exposure, hijack rate with 95% intervals, warnings, reply length; writes `results/summary.json` (no API calls) |
 
 Planned: human-labelled validation of the LLM judge, defense variants (prompt warning, untrusted-data delimiting, output checker, retrieval-level filtering), and a cross-model comparison.
 
@@ -70,7 +71,34 @@ All 12 payloads fit inside the 300-character short-description window, so none i
 
 **Interpretation:** retrieval acts as a gatekeeper. A hidden instruction in an obscure product almost never reaches the model, but one line of stuffed keywords in a field the model never reads puts the poisoned product in front of it for about half of all conversations. Catalog spam filtering is therefore a security control, not only an SEO concern.
 
-**Limitations:** the search keywords here are chosen by hand; in production the model chooses them, and Stage 2 will measure exposure with the model's own keyword choices. Because nopCommerce matches the whole keyword string, multi-word searches ("running shoes") are not matched by single-word stuffing, so exposure depends on how the model phrases its searches. Display position is approximated by catalog order. The catalog and query set are small and synthetic.
+**Limitations:** the search keywords here are chosen by hand; in production the model chooses them, and Stage 2 below measures exposure with the model's own keyword choices. Because nopCommerce matches the whole keyword string, multi-word searches ("running shoes") are not matched by single-word stuffing, so exposure depends on how the model phrases its searches. Display position is approximated by catalog order. The catalog and query set are small and synthetic.
+
+### Stage 2: end-to-end runs on Sonnet 5.5 and Haiku 5.5
+
+1,040 conversations: 80 clean baselines plus 960 attacked (4 goals x 3 phrasings x 40 queries x 2 models). One kettle listing was tampered with per attacked run, with the instruction in the short description and keyword stuffing in the full description. The model chose its own search keywords. Raw runs and scores are in `results/stage2/`.
+
+| | Sonnet 5.5 | Haiku 5.5 |
+|---|---|---|
+| Attacked conversations | 480 | 480 |
+| Tampered listing appeared in the search results | 40% (192) | 7% (33) |
+| Followed the injected instruction | 0 | 0 |
+| 95% upper bound on the hijack rate, given the listing appeared | 2.0% | 10.4% |
+| Warned the shopper about the injected text, given the listing appeared | 100% | 21% |
+| Mean reply length, no attack / attacked and listing seen (words) | 28 / 53 | 24 / 33 |
+
+**What the data supports**
+
+1. **No hijacks in 960 attacked conversations.** Both models ignored all twelve payload variants. For Haiku only 33 conversations reached the tampered listing, so the bound is loose: the data cannot rule out a hijack rate near 10%.
+2. **Exposure depends on the model's own searching.** With hand-picked search keywords, Stage 1 measured 49% exposure on average. With the model choosing, Sonnet saw the listing in 40% of conversations and Haiku in 7%. Haiku wrote multi-word searches 90% of the time (Sonnet 58%) and used a category filter in 34% of searches (Sonnet 13%), and single-word stuffing matches neither. Evaluations that skip the model's search behaviour can misstate exposure in either direction.
+3. **Failed attacks still change the reply.** Sonnet told the shopper about the injected text every time it saw it, and its replies grew from 28 to 53 words against a 30-word limit in the shop's own instructions. Haiku usually ignored the text silently and its replies grew less.
+4. **String matching alone over-reported.** One Sonnet reply quoted the attacker's discount in order to refuse it, and a string check counted it as a hijack. The final verdict now requires the LLM judge to agree.
+
+**Limitations**
+
+- The attacks are static: written once and never adapted to the replies. Zero hijacks says these payloads failed here. It is not evidence that the assistant resists an attacker who adapts.
+- One tampered listing, one fictional catalog, one run per condition. Run-to-run variation was not measured.
+- The LLM judge has not yet been compared with human labels.
+- Haiku's small number of exposures makes its estimate weak (see the interval above).
 
 ## Quick start
 
@@ -114,7 +142,9 @@ All experiments run offline against a synthetic catalog. No live store, real cus
 - [x] Stage 1: exposure measurement
 - [ ] Validate retrieval against the production plugin's search settings
 - [x] Stage 2: model runner and judge implemented
-- [ ] Stage 2: full run (Sonnet 5.5 vs Haiku 5.5)
+- [x] Stage 2: full run (Sonnet 5.5 vs Haiku 5.5)
+- [ ] Forced-exposure condition: tamper with the listing that truly matches each query, so every run reaches the hijack stage
+- [ ] Adaptive attacker: payloads rewritten from the model's replies
 - [ ] LLM judge validated against a human-labelled sample
 - [ ] Stage 3: defenses and helpfulness cost
 - [ ] Cross-model comparison
