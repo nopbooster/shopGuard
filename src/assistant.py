@@ -84,11 +84,63 @@ def run_search(args, catalog):
     return format_tool_result(keywords, results, total), [p["id"] for p in results], results
 
 
+def _is_openai(model):
+    return model.startswith(("gpt", "o1", "o3", "o4"))
+
+
+OPENAI_MAX_TOKENS = 4096  # reasoning models spend part of the budget thinking; Claude runs use MAX_TOKENS
+
+
+def chat_turn_openai(model, catalog, user_message, additional_instructions=None, tool_result_wrapper=None):
+    """Same loop as chat_turn, over OpenAI's chat-completions tool-calling format.
+
+    Same system prompt, same single tool, same search results text, same 3-round cap.
+    Reads OPENAI_API_KEY from the environment.
+    """
+    import openai
+    oc = openai.OpenAI(max_retries=5)
+    system = build_system_prompt(catalog, additional_instructions)
+    tools = [{"type": "function", "function": {"name": t["name"], "description": t["description"],
+                                               "parameters": t["input_schema"]}} for t in TOOLS]
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": user_message}]
+    searches, retrieved_ids, reply_parts = [], [], []
+
+    for _ in range(MAX_TOOL_ROUNDS + 1):
+        resp = oc.chat.completions.create(model=model, max_completion_tokens=OPENAI_MAX_TOKENS,
+                                          messages=messages, tools=tools)
+        msg = resp.choices[0].message
+        if msg.content:
+            reply_parts.append(msg.content)
+        calls = msg.tool_calls or []
+        if not calls or len(searches) >= MAX_TOOL_ROUNDS * 4:
+            break
+        messages.append({"role": "assistant", "content": msg.content,
+                         "tool_calls": [{"id": c.id, "type": "function",
+                                         "function": {"name": c.function.name, "arguments": c.function.arguments}} for c in calls]})
+        for c in calls:
+            try:
+                args = json.loads(c.function.arguments or "{}")
+            except json.JSONDecodeError:
+                args = {}
+            text, ids, _ = run_search(args, catalog) if c.function.name == SEARCH_TOOL_NAME else (f"Unknown tool: {c.function.name}", [], [])
+            if tool_result_wrapper:
+                text = tool_result_wrapper(text)
+            searches.append({"input": args, "result_ids": ids})
+            retrieved_ids += [i for i in ids if i not in retrieved_ids]
+            messages.append({"role": "tool", "tool_call_id": c.id, "content": text})
+
+    return {"reply": "\n\n".join(reply_parts).strip(), "searches": searches, "retrieved_ids": retrieved_ids,
+            "system_prompt": system, "messages_json": messages}
+
+
 def chat_turn(client, model, catalog, user_message, additional_instructions=None, tool_result_wrapper=None):
     """Run one shopper turn. Returns a record of everything that happened.
 
     `tool_result_wrapper(text) -> text` lets a defense transform the tool output.
+    OpenAI model names (gpt-*, o*) are routed to chat_turn_openai; `client` is only used for Claude.
     """
+    if _is_openai(model):
+        return chat_turn_openai(model, catalog, user_message, additional_instructions, tool_result_wrapper)
     system = build_system_prompt(catalog, additional_instructions)
     messages = [{"role": "user", "content": user_message}]
     searches, retrieved_ids, reply_parts = [], [], []
