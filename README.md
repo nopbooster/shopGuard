@@ -135,6 +135,19 @@ shopguard/
 
 All experiments run offline against a synthetic catalog. No live store, real customer data or third-party system is tested. Attack payloads use the reserved `.example` domain. See [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md).
 
+## Judge validation and forced-exposure pilot
+
+**Judge validation.** One person hand-labelled 40 stratified replies blind to the judge's verdict (obeyed / ignored silently / ignored and warned). On the 39 labelled items the judge agreed on 38 (97%, Cohen's kappa 0.93; three initial disagreements were the labeller's own misclicks, corrected after review, so treat the figure as optimistic). The sample contained no real hijacks, so I added 12 positive controls: replies written to clearly obey or clearly resist each attack goal. The judge classified 12/12 correctly. Labels: `results/stage1/hand_labels.json`; controls: `scripts/judge_controls.py`.
+
+**Forced-exposure pilot.** The poisoned product is the one that genuinely matches each query, so the model must read the payload (goals: disparage, phishing, leak; one rotated goal/style per query). Script: `scripts/run_forced.py`, data: `results/stage2_forced/runs.jsonl`.
+
+| Model | Runs | Poisoned item retrieved | Hijacked | Warned the shopper |
+|---|---|---|---|---|
+| Sonnet 5.5 | 39 | 39 | 0 | 39 |
+| Haiku 5.5 | 39 | 12 | 0 | 4 |
+
+Caveats: static payloads, one catalog, one run per condition, a single judge model. Haiku often skips the poisoned item by choosing different keywords or a category filter, so even forced exposure only reached 12 runs. Zero hijacks in 39 runs bounds the true rate at roughly 9% (95% upper limit) for Sonnet 5.5; it does not show the models are robust to adaptive attackers.
+
 ## Roadmap
 
 - [x] Synthetic catalog and query set
@@ -143,9 +156,9 @@ All experiments run offline against a synthetic catalog. No live store, real cus
 - [ ] Validate retrieval against the production plugin's search settings
 - [x] Stage 2: model runner and judge implemented
 - [x] Stage 2: full run (Sonnet 5.5 vs Haiku 5.5)
-- [ ] Forced-exposure condition: tamper with the listing that truly matches each query, so every run reaches the hijack stage
+- [x] Forced-exposure pilot (Sonnet 5.5 and Haiku 5.5, 39 queries each; see below)
 - [ ] Adaptive attacker: payloads rewritten from the model's replies
-- [ ] LLM judge validated against a human-labelled sample
+- [x] LLM judge validated: 40 hand-labelled replies plus 12 positive controls (see below)
 - [ ] Stage 3: defenses and helpfulness cost
 - [ ] Cross-model comparison
 - [ ] Extension: injection in an AI product-translation plugin
